@@ -52,6 +52,22 @@ const removeNote = title => {
     }
 }
 
+const listNotes = () =>{
+    const notes = loadNotes();
+    if(notes.length!= 0){
+        console.log(chalk.inverse('Your Notes: '))
+        notes.forEach((note,index) => {
+            console.log(chalk.green('\nNote #'+ (index+1) + '\nTitle: ' + note.title + '\nContent: ' + note.body+'\n'));
+            if(index<(notes.length-1)){
+                console.log("=============================================================");
+            }
+
+        })
+    }
+    else{
+        console.log(chalk.red('No Note added yet!'));
+    }
+}
 const saveNotes = notes => {
     const notesJSON = JSON.stringify(notes);
     fs.writeFileSync('notes.json',notesJSON);
@@ -69,6 +85,7 @@ const loadNotes = () =>{
 module.exports= {
     getNotes:getNotes,
     addNote:addNote,
-    removeNote:removeNote
+    removeNote:removeNote,
+    listNotes:listNotes
 }
 
