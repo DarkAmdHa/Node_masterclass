@@ -49,8 +49,8 @@ const removeNote = (title) => {
     const notesToKeep = notes.filter((note)=>{
         return note.title != title;
     });
-    if(notes===notesToKeep){
-        console.log(chalk.red('No note with such a title found!'));
+    if(notes.length === notesToKeep.length){
+        console.log(chalk.red('No note found!'));
     }else{
         console.log(chalk.green('Note Removed!'));
         saveNotes(notesToKeep);
