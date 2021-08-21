@@ -1,15 +1,12 @@
 const fs = require('fs');
 const chalk = require('chalk')
 
-const { parsed } = require('yargs');
-const getNotes = () => {return 'Your notes...'};
+const getNotes = () =>  'Your notes...'
 
 const addNote = (title,body) => {
     const notes = loadNotes();
 
-    const duplicateNotes = notes.filter(function(note) {
-        return note.title === title;
-    });
+    const duplicateNotes = notes.filter(note => note.title === title)
     if(duplicateNotes.length != 0){
         console.log(chalk.red('Note title taken!')); 
     }
@@ -24,7 +21,7 @@ const addNote = (title,body) => {
     
 }
 
-const removeNote = (title) => {
+const removeNote = title => {
     const notes = loadNotes();
     //MY WAY:
     // const removeNote = notes.filter((note,index)=>{
@@ -46,9 +43,7 @@ const removeNote = (title) => {
     // saveNotes(notes);
 
     //HighWAY:
-    const notesToKeep = notes.filter((note)=>{
-        return note.title != title;
-    });
+    const notesToKeep = notes.filter(note=> note.title != title)
     if(notes.length === notesToKeep.length){
         console.log(chalk.red('No note found!'));
     }else{
@@ -57,16 +52,16 @@ const removeNote = (title) => {
     }
 }
 
-const saveNotes = (notes) => {
+const saveNotes = notes => {
     const notesJSON = JSON.stringify(notes);
     fs.writeFileSync('notes.json',notesJSON);
 }
 
-const loadNotes = () => {
+const loadNotes = () =>{
     try{
-        const bufferData=  fs.readFileSync('notes.json');
-        const JSONdata = bufferData.toString();
-        return JSON.parse(JSONdata);
+        const bufferData = fs.readFileSync('notes.json');
+        const notesJSON = bufferData.toString();
+        return JSON.parse(notesJSON);
     }catch(e){
         return [];
     }
