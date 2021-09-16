@@ -1,102 +1,72 @@
 const fs = require('fs');
-const chalk = require('chalk')
+const chalk = require('chalk');
+const getNotes = ()=>{
+    return 'Your Notes...';
+}
 
-const addNote = (title,body) => {
+const addNote = (title,body)=>{
     const notes = loadNotes();
-
-    // const duplicateNotes = notes.filter(note => note.title === title) Goes through all despite finding a match, the one down is more efficient for us
-    const duplicateNote = notes.find(note=> note.title === title);
-    if(duplicateNote){
-        console.log(chalk.red('Note title taken!')); 
-    }
-    else{
+    const duplicateNote = notes.find(note => note.title === title);
+    if(!duplicateNote){
         notes.push({
-            title: title,
-            body: body
+            title:title,
+            body:body
         });
-    saveNotes(notes);
-    console.log(chalk.green('New note added!'));
-    }
-    
-}
+        saveNotes(notes);
+        console.log(chalk.green.inverse('Note Added'));
 
-const removeNote = title => {
-    const notes = loadNotes();
-    //MY WAY:
-    // const removeNote = notes.filter((note,index)=>{
-        
-    //     if(note.title === title){
-    //         notes.splice(index,1);
-    //         return true;
-    //     }
-    //     else{
-    //         return false;
-    //     }
-    // });
-    // if(removeNote.length != 0){
-    //     console.log(chalk.green('Note removed!'));
-    // }
-    // else{
-    //     console.log(chalk.red('No note with such a title found!'));
-    // }
-    // saveNotes(notes);
-
-    //HighWAY:
-    const notesToKeep = notes.filter(note=> note.title != title)
-    if(notes.length === notesToKeep.length){
-        console.log(chalk.red('No note found!'));
-    }else{
-        console.log(chalk.green('Note Removed!'));
-        saveNotes(notesToKeep);
-    }
-}
-
-const listNotes = () =>{
-    const notes = loadNotes();
-    if(notes.length!= 0){
-        console.log(chalk.inverse('Your Notes: '))
-        notes.forEach((note,index) => {
-            console.log(chalk.green('\nNote #'+ (index+1) + '\nTitle: ' + note.title + '\nContent: ' + note.body+'\n'));
-            if(index<(notes.length-1)){
-                console.log("=============================================================");
-            }
-
-        })
     }
     else{
-        console.log(chalk.red('No Note added yet!'));
+        console.log(chalk.red.inverse('Note Title Already Taken'));
     }
 }
 
-const readNote= title =>{
+const removeNote = (title)=>{
+    const notes = loadNotes();
+    const duplicateNotes = notes.filter(note => note.title!=title);
+    if(duplicateNotes.length === notes.length){
+        console.log(chalk.red.inverse('No note with such title found.'));
+    }
+    else{
+        saveNotes(duplicateNotes);
+        console.log(chalk.green.inverse('Note Removed.'));
+    }
+}
+
+const listNotes = ()=>{
+    const notes = loadNotes();
+    console.log(chalk.green.inverse('Your Notes: '));
+    notes.forEach(note => console.log('\nTitle: ', note.title, '\n'));
+}
+
+
+const readNote = title =>{
     const notes = loadNotes();
     const noteToRead = notes.find(note => note.title === title);
     if(noteToRead){
-        console.log(chalk.green('\n' + noteToRead.title));
-        console.log(noteToRead.body + '\n');
-    }
-    else{
-        console.log(chalk.red('No note with such title found'));
+        console.log('\n');
+        console.log(chalk.green('Title: ', noteToRead.title));
+        console.log(noteToRead.body, '\n');
+    }else{
+        console.log(chalk.red.bold.inverse('No note with such a title found.'));
     }
 }
-const saveNotes = notes => {
-    const notesJSON = JSON.stringify(notes);
-    fs.writeFileSync('notes.json',notesJSON);
-}
+const saveNotes = notes =>  fs.writeFileSync('notes.json',JSON.stringify(notes));
 
-const loadNotes = () =>{
+const loadNotes = ()=>{
     try{
-        const bufferData = fs.readFileSync('notes.json');
-        const notesJSON = bufferData.toString();
-        return JSON.parse(notesJSON);
+        const notes = fs.readFileSync('notes.json').toString();
+        return JSON.parse(notes);
     }catch(e){
         return [];
     }
 }
-module.exports= {
+ 
+module.exports = {
+    getNotes: getNotes,
     addNote:addNote,
-    removeNote:removeNote,
-    listNotes:listNotes,
-    readNote:readNote
-}
+    removeNote: removeNote,
+    listNotes: listNotes,
+    readNote: readNote
+};
 
